@@ -1,0 +1,12 @@
+# ---------------------------------------------------------------------------
+# Exclusions list for contacts you don't want to extract. Both domains and
+# specific addresses are valid.
+# -- * They must be separated by comma.
+# -- * Multi-line is supported.
+# ---------------------------------------------------------------------------
+
+# domains (example: @domain.com)
+@domain-a.com, @domain-b.com, @domain-c.com
+
+# emails (example: account@domain.com)
+account1@domain1.com, account2@domain1.com, account@domain2.com

@@ -1,0 +1,8 @@
+# ---------------------------------------------------------------------------
+# Google Apps @yourdomain.com accounts from which contacts will be extracted.
+# -- * They must be separated by comma.
+# -- * Multi-line is supported.
+# ---------------------------------------------------------------------------
+
+account1, account2, account3
+account4, ...
