@@ -1,5 +1,6 @@
 [files]
 exclusions:				exclusions.conf
 source_accounts:		source_accounts.conf
-extracted_addresses:	extracted_addresses.txt
+results_file:			all_extracted_addresses.txt
+results_folder:			extracted_addresses
 google_apps_api_auth:	google_apps_api_auth.ini
