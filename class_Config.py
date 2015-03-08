@@ -3,9 +3,9 @@
 # ---------------------------------------------------------------------------
 #  - Author:    desko27
 #  - Email:     desko27@gmail.com
-#  - Version:   2.0.0
+#  - Version:   2.1.0
 #  - Created:   2015/01/28
-#  - Updated:   2015/02/06
+#  - Updated:   2015/02/14
 # ----------------------------------------------------------------------------
 
 from iniparse import INIConfig
@@ -16,6 +16,7 @@ from codecs import open as uopen
 # functions
 # ---------------------------------------------------------------------------
 conf_exists = lambda e: type(e) != Undefined
+conf_exists_value = lambda e, value: conf_exists(e) and e == value
 
 # ---------------------------------------------------------------------------
 # classes
