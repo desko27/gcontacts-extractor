@@ -3,9 +3,9 @@
 # ---------------------------------------------------------------------------
 #  - Author:    desko27
 #  - Email:     desko27@gmail.com
-#  - Version:   1.1.0
+#  - Version:   1.1.1
 #  - Created:   2015/01/28
-#  - Updated:   2015/02/18
+#  - Updated:   2015/03/08
 # ----------------------------------------------------------------------------
 """This script is intended for extracting contact's addresses from a specified
 set of Google Apps users. You must have Google Apps with API enabled, and
@@ -13,7 +13,7 @@ set up the API Auth data on the corresponding file.
 
 Output goes to the relative folder defined in results_folder value of conf.ini
 
-Usage: ~extractor.py [-s] [-k] (-f | <source-accounts> ...)
+Usage: gcontacts-extractor.py [-s] [-k] (-f | <source-accounts> ...)
   
 Options:
   -h --help
@@ -76,7 +76,7 @@ if __name__ == '__main__':
 		
 		print ' >> %s' % account,
 		
-		gd_client = gdata.contacts.client.ContactsClient(domain = google.consumer_key, source='google-contacts-address-extractor')
+		gd_client = gdata.contacts.client.ContactsClient(domain = google.consumer_key, source='gcontacts-extractor')
 		gd_client.auth_token = google.get_token(account)
 		try: feed = gd_client.GetContacts(q = query)
 		except: print '-Error-'; continue
