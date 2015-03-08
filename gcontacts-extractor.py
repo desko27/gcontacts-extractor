@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------------------
 #  - Author:    desko27
 #  - Email:     desko27@gmail.com
-#  - Version:   1.1.1
+#  - Version:   1.1.2
 #  - Created:   2015/01/28
 #  - Updated:   2015/03/08
 # ----------------------------------------------------------------------------
@@ -42,68 +42,68 @@ from class_Config import Config, conf_exists
 # ---------------------------------------------------------------------------
 if __name__ == '__main__':
 
-	# retrieve arguments
-	args = docopt(__doc__)
-	
-	# retrieve config values
-	files = Config('conf.ini').files
-	auth = Config(files.google_apps_api_auth).auth
-	
-	# remove previous results on results folder
-	if not args['--keep']:
-		for f in listdir(files.results_folder):
-			element = join(files.results_folder, f)
-			if isfile(element): remove(element)
-	
-	# list managers
-	lm_exclusions = ListManager(file = files.exclusions)
-	lm_source = ListManager(file = files.source_accounts)
-	lm_export = ListManager(file = join(files.results_folder, files.results_file), load = False)
-	
-	# google auth
-	google = GoogleAuth(auth.consumer_key, auth.consumer_secret)
-	
-	# query conditions
-	query = gdata.contacts.client.ContactsQuery()
-	query.max_results = maxint
-	
-	# load & iterate over accounts
-	accounts = lm_source.load() if args['--from-file'] else args['<source-accounts>']
-	exclusions = lm_exclusions.load()
-	
-	print 'Processing accounts...\n'
-	for account in accounts:
-		
-		print ' >> %s' % account,
-		
-		gd_client = gdata.contacts.client.ContactsClient(domain = google.consumer_key, source='gcontacts-extractor')
-		gd_client.auth_token = google.get_token(account)
-		try: feed = gd_client.GetContacts(q = query)
-		except: print '-Error-'; continue
-		if not feed.entry: continue
-		
-		addresses = []
-		for i, entry in enumerate(feed.entry):
-			for email in entry.email:
-				
-				for exclusion in exclusions:
-					if exclusion.startswith('@') and email.address.endswith(exclusion): break
-					elif email.address == exclusion: break
-				else:
-					addresses.append(email.address)
-					
-		lm_acc_export = ListManager(file = join(files.results_folder, '%s.txt' % account), load = False)
-		lm_acc_export.list = addresses
-		lm_acc_export.unique_elements()
-		if args['--separated']: lm_acc_export.save()
-		
-		print '(%i)' % len(addresses)
-		lm_export.list += addresses
-	
-	# save the total extracted addresses
-	lm_export.unique_elements()
-	if not args['--separated']: lm_export.save()
-	
-	# finished
-	print '\nFinished! - (%s) TOTAL unique addresses.' % len(lm_export.list)
-	
+    # retrieve arguments
+    args = docopt(__doc__)
+    
+    # retrieve config values
+    files = Config('conf.ini').files
+    auth = Config(files.google_apps_api_auth).auth
+    
+    # remove previous results on results folder
+    if not args['--keep']:
+        for f in listdir(files.results_folder):
+            element = join(files.results_folder, f)
+            if isfile(element): remove(element)
+    
+    # list managers
+    lm_exclusions = ListManager(file = files.exclusions)
+    lm_source = ListManager(file = files.source_accounts)
+    lm_export = ListManager(file = join(files.results_folder, files.results_file), load = False)
+    
+    # google auth
+    google = GoogleAuth(auth.consumer_key, auth.consumer_secret)
+    
+    # query conditions
+    query = gdata.contacts.client.ContactsQuery()
+    query.max_results = maxint
+    
+    # load & iterate over accounts
+    accounts = lm_source.load() if args['--from-file'] else args['<source-accounts>']
+    exclusions = lm_exclusions.load()
+    
+    print 'Processing accounts...\n'
+    for account in accounts:
+        
+        print ' >> %s' % account,
+        
+        gd_client = gdata.contacts.client.ContactsClient(domain = google.consumer_key, source='gcontacts-extractor')
+        gd_client.auth_token = google.get_token(account)
+        try: feed = gd_client.GetContacts(q = query)
+        except: print '-Error-'; continue
+        if not feed.entry: continue
+        
+        addresses = []
+        for i, entry in enumerate(feed.entry):
+            for email in entry.email:
+                
+                for exclusion in exclusions:
+                    if exclusion.startswith('@') and email.address.endswith(exclusion): break
+                    elif email.address == exclusion: break
+                else:
+                    addresses.append(email.address)
+                    
+        lm_acc_export = ListManager(file = join(files.results_folder, '%s.txt' % account), load = False)
+        lm_acc_export.list = addresses
+        lm_acc_export.unique_elements()
+        if args['--separated']: lm_acc_export.save()
+        
+        print '(%i)' % len(addresses)
+        lm_export.list += addresses
+    
+    # save the total extracted addresses
+    lm_export.unique_elements()
+    if not args['--separated']: lm_export.save()
+    
+    # finished
+    print '\nFinished! - (%s) TOTAL unique addresses.' % len(lm_export.list)
+    
