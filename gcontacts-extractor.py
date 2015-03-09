@@ -3,9 +3,9 @@
 # ---------------------------------------------------------------------------
 #  - Author:    desko27
 #  - Email:     desko27@gmail.com
-#  - Version:   1.1.2
+#  - Version:   1.1.3
 #  - Created:   2015/01/28
-#  - Updated:   2015/03/08
+#  - Updated:   2015/03/09
 # ----------------------------------------------------------------------------
 """This script is intended for extracting contact's addresses from a specified
 set of Google Apps users. You must have Google Apps with API enabled, and
@@ -24,8 +24,8 @@ Options:
 """
 
 from docopt import docopt
-from os import listdir, remove
-from os.path import join, isfile
+from os import mkdir, listdir, remove
+from os.path import join, isfile, exists
 from sys import maxint
 
 # google api
@@ -49,6 +49,10 @@ if __name__ == '__main__':
     files = Config('conf.ini').files
     auth = Config(files.google_apps_api_auth).auth
     
+    # create results folder if needed
+    if not exists(files.results_folder):
+        mkdir(files.results_folder)
+        
     # remove previous results on results folder
     if not args['--keep']:
         for f in listdir(files.results_folder):

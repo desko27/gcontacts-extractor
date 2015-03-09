@@ -13,7 +13,7 @@ gcontacts-extractor.py [-s] [-k] (-f | <source-accounts> ...)
 
 1. Remove `.sample` extension from sample config files.
 1. Set consumer_key, consumer_secret and admin_username on `google_apps_api_auth.ini`.
-2. Execute `gcontacts-extractor.py bob jack sally`.
+2. Execute `gcontacts-extractor.py -s bob jack sally`.
 3. You've got `bob.txt`, `jack.txt` and `sally.txt` text files containing all of their mail addresses.
 
 ## Options
