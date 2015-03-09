@@ -1,7 +1,4 @@
-# gcontacts-extractor.py
-
-[![Build Status](https://travis-ci.org/desko27/gcontacts-extractor.svg?branch=master)](https://travis-ci.org/desko27/google-contacts-address-extractor)
-[![Codacy Badge](https://www.codacy.com/project/badge/8077cc0440db43709c6b554a2d51a3b6)](https://www.codacy.com/public/desko27/gcontacts-extractor)
+# gcontacts-extractor [![Build Status](https://travis-ci.org/desko27/gcontacts-extractor.svg?branch=master)](https://travis-ci.org/desko27/google-contacts-address-extractor) [![Codacy Badge](https://www.codacy.com/project/badge/8077cc0440db43709c6b554a2d51a3b6)](https://www.codacy.com/public/desko27/gcontacts-extractor)
 
 ```
 This script is intended for extracting contact's addresses from a specified
