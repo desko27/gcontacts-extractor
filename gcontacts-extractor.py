@@ -33,9 +33,9 @@ import gdata.contacts.data
 import gdata.contacts.client
 
 # custom classes
-from class_ListManager import ListManager
-from class_GoogleAuth import GoogleAuth
-from class_Config import Config, conf_exists
+from custom.ListManager import ListManager
+from custom.GoogleAuth import GoogleAuth
+from custom.Config import Config, conf_exists
 
 # ---------------------------------------------------------------------------
 # program
