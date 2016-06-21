@@ -83,7 +83,7 @@ if __name__ == '__main__':
         gd_client = gdata.contacts.client.ContactsClient(domain = google.consumer_key, source='gcontacts-extractor')
         gd_client.auth_token = google.get_token(account)
         try: feed = gd_client.GetContacts(q = query)
-        except: print '-Error-'; continue
+        except Exception as e: print '- Error: ', type(e); continue
         if not feed.entry: continue
         
         addresses = []
