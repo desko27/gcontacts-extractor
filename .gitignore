@@ -1,6 +1,10 @@
 # config files
 *.ini
 *.conf
+service_account_keys.json
+
+# results
+extracted_*/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

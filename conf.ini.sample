@@ -1,6 +1,9 @@
+[auth]
+default_domain:			example.com
+service_account_keys:	service_account_keys.json
+
 [files]
 exclusions:				exclusions.conf
+results_file:           extracted_addresses.txt
+results_folder:         extracted_%s
 source_accounts:		source_accounts.conf
-results_file:			all_extracted_addresses.txt
-results_folder:			extracted_addresses
-google_apps_api_auth:	google_apps_api_auth.ini

@@ -3,23 +3,25 @@
 # ---------------------------------------------------------------------------
 #  - Author:    desko27
 #  - Email:     desko27@gmail.com
-#  - Version:   1.1.3
+#  - Version:   2.0.0
 #  - Created:   2015/01/28
-#  - Updated:   2015/03/09
+#  - Updated:   2016/06/24
 # ----------------------------------------------------------------------------
 """This script is intended for extracting contact's addresses from a specified
-set of Google Apps users. You must have Google Apps with API enabled, and
-set up the API Auth data on the corresponding file.
+set of Google Apps users. See https://github.com/desko27/gcontacts-extractor
+for a howto about configuring your Google Apps environment and running this
+script with it.
 
 Output goes to the relative folder defined in results_folder value of conf.ini
 
-Usage: gcontacts-extractor.py [-s] [-k] (-f | <source-accounts> ...)
+Usage: gcontacts-extractor.py [-d=<domain>] [-s] [-k] (-f | <source-accounts> ...)
   
 Options:
   -h --help
-  -s --separated  send output to separated files (per account)
-  -k --keep       keep previous results on the output folder
-  -f --from-file  get source accounts from file instead of from arguments
+  -d --domain=<domain>  override default domain
+  -s --separated        send output to separated files (per account)
+  -k --keep             keep previous results on the output folder
+  -f --from-file        get source accounts from file instead of from arguments
   
 """
 
@@ -31,10 +33,10 @@ from sys import maxint
 # google api
 import gdata.contacts.data
 import gdata.contacts.client
+from oauth2client.service_account import ServiceAccountCredentials
 
 # custom classes
 from custom.ListManager import ListManager
-from custom.GoogleAuth import GoogleAuth
 from custom.Config import Config, conf_exists
 
 # ---------------------------------------------------------------------------
@@ -46,26 +48,33 @@ if __name__ == '__main__':
     args = docopt(__doc__)
     
     # retrieve config values
-    files = Config('conf.ini').files
-    auth = Config(files.google_apps_api_auth).auth
+    conf = Config('conf.ini')
+    files = conf.files
+    auth = conf.auth
+
+    # override domain if it's specified
+    domain = args['--domain'] if args['--domain'] != None else auth.default_domain
     
     # create results folder if needed
-    if not exists(files.results_folder):
-        mkdir(files.results_folder)
-        
+    results_folder = files.results_folder % domain
+    if not exists(results_folder):
+        mkdir(results_folder)
+    
     # remove previous results on results folder
     if not args['--keep']:
-        for f in listdir(files.results_folder):
-            element = join(files.results_folder, f)
+        for f in listdir(results_folder):
+            element = join(results_folder, f)
             if isfile(element): remove(element)
     
     # list managers
     lm_exclusions = ListManager(file = files.exclusions)
     lm_source = ListManager(file = files.source_accounts)
-    lm_export = ListManager(file = join(files.results_folder, files.results_file), load = False)
+    lm_export = ListManager(file = join(results_folder, files.results_file), load = False)
     
-    # google auth
-    google = GoogleAuth(auth.consumer_key, auth.consumer_secret)
+    # google auth -> use the service account
+    # (should be authorised to use 'https://www.google.com/m8/feeds/' scope from google api console)
+    scopes = ['https://www.google.com/m8/feeds/']
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(auth.service_account_keys, scopes)
     
     # query conditions
     query = gdata.contacts.client.ContactsQuery()
@@ -80,8 +89,14 @@ if __name__ == '__main__':
         
         print ' >> %s' % account,
         
-        gd_client = gdata.contacts.client.ContactsClient(domain = google.consumer_key, source='gcontacts-extractor')
-        gd_client.auth_token = google.get_token(account)
+        # prepare requestor credentials
+        requestor_id = '%s@%s' % (account, domain)
+        delegated_credentials = credentials.create_delegated(requestor_id)
+
+        # authorize google datastore client
+        gd_client = gdata.contacts.client.ContactsClient(domain = domain, source = 'gcontacts-1328')
+        gdata.gauth.OAuth2TokenFromCredentials(delegated_credentials).authorize(gd_client)
+
         try: feed = gd_client.GetContacts(q = query)
         except Exception as e: print '- Error: ', type(e); continue
         if not feed.entry: continue
@@ -96,7 +111,7 @@ if __name__ == '__main__':
                 else:
                     addresses.append(email.address)
                     
-        lm_acc_export = ListManager(file = join(files.results_folder, '%s.txt' % account), load = False)
+        lm_acc_export = ListManager(file = join(results_folder, '%s.txt' % account), load = False)
         lm_acc_export.list = addresses
         lm_acc_export.unique_elements()
         if args['--separated']: lm_acc_export.save()
