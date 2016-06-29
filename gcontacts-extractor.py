@@ -106,8 +106,7 @@ if __name__ == '__main__':
             for email in entry.email:
                 
                 for exclusion in exclusions:
-                    if exclusion.startswith('@') and email.address.endswith(exclusion): break
-                    elif email.address == exclusion: break
+                    if exclusion in email.address: break
                 else:
                     addresses.append(email.address)
                     
