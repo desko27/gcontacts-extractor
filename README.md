@@ -16,7 +16,7 @@ gcontacts-extractor.py [-d=<domain>] [-s] [-k] (-f | <source-accounts> ...)
 
 ## Howto
 
-1. [Create a service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount#creatinganaccount) in Google Apps console and paste `service_account_keys.json` in the root dir of this script.
+1. [Create a service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount#creatinganaccount) in Google Apps console and paste `service_account_keys.json` in the settings folder.
 2. [Authorize the contacts scope](https://developers.google.com/identity/protocols/OAuth2ServiceAccount#delegatingauthority) for the service account: `https://www.google.com/m8/feeds/`.
 3. Copy sample config files and remove their `.sample` extension.
 4. Set default_domain in `conf.ini` as your Google Apps domain.

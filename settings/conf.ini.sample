@@ -1,0 +1,9 @@
+[auth]
+default_domain:			example.com
+service_account_keys:	settings/service_account_keys.json
+
+[files]
+exclusions:				settings/exclusions.conf
+source_accounts:		settings/source_accounts.conf
+output_folder:          output
+output_file:            extracted_addresses.txt

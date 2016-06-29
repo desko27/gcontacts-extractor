@@ -3,16 +3,16 @@
 # ---------------------------------------------------------------------------
 #  - Author:    desko27
 #  - Email:     desko27@gmail.com
-#  - Version:   2.0.0
+#  - Version:   2.1.0
 #  - Created:   2015/01/28
-#  - Updated:   2016/06/24
+#  - Updated:   2016/06/29
 # ----------------------------------------------------------------------------
 """This script is intended for extracting contact's addresses from a specified
 set of Google Apps users. See https://github.com/desko27/gcontacts-extractor
 for a howto about configuring your Google Apps environment and running this
 script with it.
 
-Output goes to the relative folder defined in results_folder value of conf.ini
+Output goes to the relative folder defined in output_folder value of conf.ini
 
 Usage: gcontacts-extractor.py [-d=<domain>] [-s] [-k] (-f | <source-accounts> ...)
   
@@ -35,9 +35,9 @@ import gdata.contacts.data
 import gdata.contacts.client
 from oauth2client.service_account import ServiceAccountCredentials
 
-# custom classes
-from custom.ListManager import ListManager
-from custom.Config import Config, conf_exists
+# local modules
+from libs.ListManager import ListManager
+from libs.Config import Config
 
 # ---------------------------------------------------------------------------
 # program
@@ -48,28 +48,28 @@ if __name__ == '__main__':
     args = docopt(__doc__)
     
     # retrieve config values
-    conf = Config('conf.ini')
+    conf = Config('settings/conf.ini')
     files = conf.files
     auth = conf.auth
 
     # override domain if it's specified
     domain = args['--domain'] if args['--domain'] != None else auth.default_domain
     
-    # create results folder if needed
-    results_folder = files.results_folder % domain
-    if not exists(results_folder):
-        mkdir(results_folder)
+    # create output folders if they don't exist
+    final_output_folder = join(files.output_folder, domain)
+    if not exists(files.output_folder): mkdir(files.output_folder)
+    if not exists(final_output_folder): mkdir(final_output_folder)
     
-    # remove previous results on results folder
+    # remove previous results on output folder
     if not args['--keep']:
-        for f in listdir(results_folder):
-            element = join(results_folder, f)
+        for f in listdir(final_output_folder):
+            element = join(final_output_folder, f)
             if isfile(element): remove(element)
     
     # list managers
     lm_exclusions = ListManager(file = files.exclusions)
     lm_source = ListManager(file = files.source_accounts)
-    lm_export = ListManager(file = join(results_folder, files.results_file), load = False)
+    lm_export = ListManager(file = join(final_output_folder, files.output_file), load = False)
     
     # google auth -> use the service account
     # (should be authorised to use 'https://www.google.com/m8/feeds/' scope from google api console)
@@ -111,7 +111,7 @@ if __name__ == '__main__':
                 else:
                     addresses.append(email.address)
                     
-        lm_acc_export = ListManager(file = join(results_folder, '%s.txt' % account), load = False)
+        lm_acc_export = ListManager(file = join(final_output_folder, '%s.txt' % account), load = False)
         lm_acc_export.list = addresses
         lm_acc_export.unique_elements()
         if args['--separated']: lm_acc_export.save()
