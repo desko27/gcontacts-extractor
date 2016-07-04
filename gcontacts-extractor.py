@@ -94,7 +94,7 @@ if __name__ == '__main__':
         delegated_credentials = credentials.create_delegated(requestor_id)
 
         # authorize google datastore client
-        gd_client = gdata.contacts.client.ContactsClient(domain = domain, source = 'gcontacts-1328')
+        gd_client = gdata.contacts.client.ContactsClient(domain = domain, source = 'gcontacts')
         gdata.gauth.OAuth2TokenFromCredentials(delegated_credentials).authorize(gd_client)
 
         try: feed = gd_client.GetContacts(q = query)
