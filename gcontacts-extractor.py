@@ -98,7 +98,7 @@ if __name__ == '__main__':
         gdata.gauth.OAuth2TokenFromCredentials(delegated_credentials).authorize(gd_client)
 
         try: feed = gd_client.GetContacts(q = query)
-        except Exception as e: print '- Error: ', type(e); continue
+        except Exception as e: print '- Error: ', str(e); continue
         if not feed.entry: continue
         
         addresses = []
