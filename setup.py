@@ -9,6 +9,7 @@ Options:
 
 import sys
 import py2exe
+import re
 
 from docopt import docopt
 from distutils.core import setup
@@ -22,10 +23,9 @@ args = docopt(__doc__)
 
 # clean up previous build
 if exists('dist/gcontacts-extractor.exe'): remove('dist/gcontacts-extractor.exe')
-if exists('dist/gcontacts-extractor.zip'): remove('dist/gcontacts-extractor.zip')
-if exists('dist/library.zip'): remove('dist/library.zip')
 if exists('dist/output'): rmtree('dist/output')
-if args['--only-clean-up'] or args['--release'] and exists('dist/settings'): rmtree('dist/settings')
+for file in glob(join('dist', '*.zip')): remove(file)
+if (args['--only-clean-up'] or args['--release']) and exists('dist/settings'): rmtree('dist/settings')
 if args['--only-clean-up']: exit()
 
 # py2exe compile options
@@ -58,5 +58,12 @@ if args['--release']:
 # deploy a zip file
 if args['--zip']:
 
-    make_archive('gcontacts-extractor', 'zip', 'dist/')
-    move('gcontacts-extractor.zip', 'dist/')
+    # get version from the script headers
+    with open(target, 'r') as f_target:
+        content = f_target.read()
+        version = re.search('Version:\s*([\d.]+)', content, re.M).group(1)
+
+    # make the zip
+    zip_filename = 'gcontacts-extractor-%s' % version
+    make_archive(zip_filename, 'zip', 'dist/')
+    move(zip_filename + '.zip', 'dist/')
