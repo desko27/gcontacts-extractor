@@ -1,9 +1,10 @@
-"""Usage: setup.py [-k] [-c]
+"""Usage: setup.py [--release] [--zip] [--only-clean-up]
 
 Options:
   -h --help
-  -k --keep-settings
-  -c --clean-up
+  -r --release     include everything that is required to get a release
+  -z --zip         output a zip package too
+  --only-clean-up  perform a clean up of the previous build in dist
 """
 
 import sys
@@ -24,8 +25,8 @@ if exists('dist/gcontacts-extractor.exe'): remove('dist/gcontacts-extractor.exe'
 if exists('dist/gcontacts-extractor.zip'): remove('dist/gcontacts-extractor.zip')
 if exists('dist/library.zip'): remove('dist/library.zip')
 if exists('dist/output'): rmtree('dist/output')
-if not args['--keep-settings'] and exists('dist/settings'): rmtree('dist/settings')
-if args['--clean-up']: exit()
+if args['--only-clean-up'] or args['--release'] and exists('dist/settings'): rmtree('dist/settings')
+if args['--only-clean-up']: exit()
 
 # py2exe compile options
 target = 'gcontacts-extractor.py'
@@ -42,18 +43,20 @@ options = {
 # make the exe!
 setup(console = [target], options = options)
 
-# copy settings
-if not args['--keep-settings']:
+# prepare release: copy settings
+if args['--release']:
 
-	makedirs('dist/settings')
+    makedirs('dist/settings')
 
-	for file in glob(join('settings', '*.sample')):
-	    copy(file, 'dist/settings/')
+    for file in glob(join('settings', '*.sample')):
+        copy(file, 'dist/settings/')
 
-	# remove `sample` extension from the copied file settings
-	for file in glob(join('dist/settings', '*.sample')):
-		rename(file, file.replace('.sample', ''))
+    # remove `sample` extension from the copied file settings
+    for file in glob(join('dist/settings', '*.sample')):
+        rename(file, file.replace('.sample', ''))
 
-# deploy zip file
-make_archive('gcontacts-extractor', 'zip', 'dist/')
-move('gcontacts-extractor.zip', 'dist/')
+# deploy a zip file
+if args['--zip']:
+
+    make_archive('gcontacts-extractor', 'zip', 'dist/')
+    move('gcontacts-extractor.zip', 'dist/')
