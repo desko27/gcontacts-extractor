@@ -21,7 +21,7 @@ gcontacts-extractor.py [-d=<domain>] [-s] [-k] (-f | <source-accounts> ...)
 2. [Authorize the contacts scope](https://developers.google.com/identity/protocols/OAuth2ServiceAccount#delegatingauthority) for the service account: `https://www.google.com/m8/feeds/`.
 3. Copy sample config files and remove their `.sample` extension.
 4. Set default_domain in `conf.ini` as your Google Apps domain.
-5. Execute `gcontacts-extractor.py -s bob jack sally` __note*__.
+5. Run `gcontacts-extractor.py -s bob jack sally` __note*__.
 6. You've got `bob.txt`, `jack.txt` and `sally.txt` text files containing all of their mail addresses.
 
 __note*__ → the domain here is implied since it is previously defined in `conf.ini`, so when you write `bob` the script is actually understanding `bob@yourdomain.com` and so on.
